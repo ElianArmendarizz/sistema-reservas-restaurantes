@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- tailwind -->
+  <link rel="stylesheet" href="./src/output.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- animaciones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Leaflet Locate Control CSS -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <title>DirectoAlPlato</title>
+  <!-- no mover Style -->
+  <style>
+    body {
+      background:
+        url('./assets/vectores_home/arriba_home.png') top right no-repeat,
+        url('./assets/vectores_home/abajo_home.png') bottom right no-repeat;
+
+      background-size: 280px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        background-size: 400px;
+      }
+    }
+
+
+    #mapDetalle {
+      height: 240px !important;
+      width: 100% !important;
+    }
+  </style>
+</head>
+
+<body class="relative min-h-screen bg-white overflow-x-hidden overflow-y-auto">
+  <!-- Contenido Principal -->
+  <div class="w-full md:flex flex-nowrap relative min-h-screen">
+
+    <!-- Contenedor izquierdo -->
+    <div class="w-full md:w-40 md:min-h-screen flex bg-[#F3F3F3] items-center justify-center flex-col sticky top-0">
+      <div class="absolute top-40">
+        <div id="botonFavoritos"
+        class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+        <img src="./assets/megusta.png" alt="Logo"
+          class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+        <p class="z-10 group-hover:text-white transition-colors duration-500">Mis favoritos</p>
+        <!-- Rectángulo animado -->
+        <div
+          class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+        </div>
+      </div>
+      <div id="botonInicio"
+        class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+        <img src="./assets/home.png" alt="Logo"
+          class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+        <P class="z-10 group-hover:text-white transition-colors duration-500">Inicio</P>
+        <div
+          class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+        </div>
+      </div>
+      <div id="botonReservaciones"
+        class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+        <img src="./assets/notificacion.png" alt="Logo"
+          class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+        <P class="z-10 group-hover:text-white transition-colors duration-500">Reservaciones</P>
+        <div
+          class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+        </div>
+      </div>
+
+      </div>
+    </div>
+    <!-- Contenedor derecho -->
+    <div class="w-full md:flex-1 flex flex-col p-4">
+
+      <!-- Botón Volver -->
+      <button onclick="history.back()"
+        class="self-start cursor-pointer text-[#FF5800] font-bold flex items-center gap-2 mt-1">
+        <i class="fa-solid fa-arrow-left"></i> Volver
+      </button>
+
+      <!-- Título y subcontenedor -->
+      <div class="animate__animated animate__backInRight dm:w-full flex flex-col p-4">
+        <h2 class="text-xl text-left font-bold">Bienvenido, <span id="nombreUsuario"></span></h2>
+        <h1 class="animate__animated animate__bounceInDown font-sans text-4xl md:text-6xl font-bold text-center">
+          DirectoAlPlato</h1>
+        <br />
+
+        <h1 id="nombreRest" class="text-3xl font-bold text-center"></h1>
+        <p id="descripcionRest" class="text-gray-700 text-center "></p>
+
+
+        <!-- Subcontenedor derecho -->
+        <div class="flex gap-[10px]  md:gap-4 bottom-0 ">
+          <div class="w-1/2">
+            <!-- Contenedor de imagen principal -->
+            <div class="relative mb-4 bg-[#F3F3F3] mt-8 ">
+              <img id="imagenPrincipal" class="w-full h-96 object-cover rounded-lg shadow-md" src=""
+                alt="Imagen principal del restaurante">
+              <!-- Flechas de navegación -->
+              <button id="btnAnterior"
+                class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 text-black text-2xl cursor-pointer p-2 rounded-full hover:bg-opacity-70 transition hidden">
+                &larr;
+              </button>
+              <button id="btnSiguiente"
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 text-black text-2xl cursor-pointer p-2 rounded-full hover:bg-opacity-70 transition hidden">
+                &rarr;
+              </button>
+            </div>
+            <!-- Contenedor de miniaturas - Asegúrate que este ID coincida con el JavaScript -->
+            <div id="contenedorMiniaturas" class="flex gap-2 overflow-x-auto pb-2"></div>
+
+            <!-- Información adicional -->
+            <div id="infoExtra"
+              class="border border-[#FF5037] bg-[#F3F3F3] shadow-md overflow-hidden rounded-lg p-4 mt-6 space-y-2 text-gray-800">
+              <h2 class="font-semibold text-lg">Información adicional</h2>
+              <div id="infoExtra" class="text-sm text-center text-gray-600"></div>
+            </div>
+          </div>
+          <!-- Contenedor de detalles del restaurante -->
+          <div class="w-1/2">
+            <!-- Sección de reservación -->
+            <div class="mt-8 p-2 bg-[#F3F3F3]  overflow-hidden rounded-lg shadow-md">
+              <h2 class="text-2xl font-bold mb-4">Haz una reservación</h2>
+              <form id="formReservacion" class="space-y-4">
+                <input type="hidden" id="idRestaurante" name="id_restaurante">
+
+                <div class="flex flex-col">
+                  <div class="flex flex-wrap gap-4 md:gap-12 md:w-full justify-between ">
+                    <div>
+                      <label for="personas" class="block text-sm font-medium text-gray-700">Número de personas</label>
+                      <select id="personas" name="cantidad_personas"
+                        class="mt-1 block w-full rounded-md border-[#FF5037] shadow-sm focus:border-[#FF5037] focus:ring-[#FF5037] bg-[#FF503780] h-12 md:w-52">
+                        <option value="1">1 persona</option>
+                        <option value="2" selected>2 personas</option>
+                        <option value="3">3 personas</option>
+                        <option value="4">4 personas</option>
+                        <option value="5">5 personas</option>
+                        <option value="6">6 personas</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label for="fecha" class="block text-sm font-medium text-gray-700 ">Fecha</label>
+                      <input type="date" id="fecha" name="fecha_reservacion" min=""
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 ] bg-[#FF503780] h-12 md:w-52"
+                        required>
+                    </div>
+
+                    <div>
+                      <label for="hora" class="block text-sm font-medium text-gray-700">Hora</label>
+                      <select id="hora" name="hora_reservacion"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 ] bg-[#FF503780] h-12 md:w-52"
+                        required>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold mb-4">¿Como llegar?</h2>
+                </div>
+                <!-- Mapa -->
+                <div id="mapDetalle" class="w-full  h-60 rounded-lg shadow-md mt-6"></div>
+                <div id="direccionMapa" class="text-sm text-left text-gray-600"></div>
+                <button type="submit"
+                  class="w-full bg-[#FF5800] text-white py-2 px-4 rounded-md hover:bg-[#E04B00] transition duration-300">
+                  Reservar tu mesa
+                </button>
+                <!--  HORARIOS ------------------------------------------------>
+                <h2 class="text-2xl text-center font-bold mb-4">Horarios</h2>
+                <div id="horariosGrid" class="text-gray-800"></div>
+
+            </div>
+            </form>
+          </div>
+        </div>
+                   <!-- Sección de Reseñas -->
+            <div class="mt-8 p-6 bg-[#F3F3F3] rounded-lg shadow-md">
+              <h2 class="text-2xl font-bold mb-4">Reseñas</h2>
+
+              <!-- Formulario para nueva reseña -->
+              <div id="formResenaContainer" class="mb-8 ">
+                <h3 class="text-lg font-semibold mb-2">Deja tu reseña</h3>
+                <form id="formResena" class="space-y-4">
+                  <input type="hidden" id="idRestauranteResena" name="id_restaurante">
+                  <input type="hidden" id="idUsuarioResena" name="id_usuario">
+
+                  <div class="flex items-center mb-2">
+                    <span class="mr-2">Calificación:</span>
+                    <div class="rating flex">
+                      <i class="fas fa-star text-gray-300 cursor-pointer text-xl" data-rating="1"></i>
+                      <i class="fas fa-star text-gray-300 cursor-pointer text-xl" data-rating="2"></i>
+                      <i class="fas fa-star text-gray-300 cursor-pointer text-xl" data-rating="3"></i>
+                      <i class="fas fa-star text-gray-300 cursor-pointer text-xl" data-rating="4"></i>
+                      <i class="fas fa-star text-gray-300 cursor-pointer text-xl" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="calificacion" name="calificacion" value="0">
+                  </div>
+
+                  <div>
+                    <textarea id="comentario" name="comentario" rows="3"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5800]"
+                      placeholder="Escribe tu experiencia..."></textarea>
+                  </div>
+
+                  <button type="submit"
+                    class="bg-[#FF5800] text-white py-2 px-4 rounded-md hover:bg-[#E04B00] transition duration-300">
+                    Enviar reseña
+                  </button>
+                </form>
+              </div>
+
+              <!-- Lista de reseñas -->
+              <div id="resenasContainer" class="space-y-6">
+                <!-- Las reseñas se cargarán aquí dinámicamente -->
+              </div>
+
+              <!-- Mensaje cuando no hay reseñas -->
+              <div id="sinResenas" class="text-center py-4 hidden">
+                <p class="text-gray-500">Este restaurante aún no tiene reseñas.</p>
+              </div>
+            </div>
+
+
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <!-- Leaflet Locate Control JS -->
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.js"></script>
+        <script src="./js/detalle_restaurante.js"></script>
+</body>
+
+</html>

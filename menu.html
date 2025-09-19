@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- tailwind -->
+    <link rel="stylesheet" href="./src/output.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- animaciones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Leaflet Locate Control CSS -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <title>DirectoAlPlato</title>
+    <!-- no mover Style -->
+    <style>
+        body {
+            background:
+                url('./assets/vectores_home/arriba_home.png') top right no-repeat,
+                url('./assets/vectores_home/abajo_home.png') bottom right no-repeat;
+
+            background-size: 280px;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                background-size: 400px;
+            }
+        }
+
+        #map {
+            height: 200px;
+            width: 85%;
+            border-radius: 0.5rem;
+            top: 60px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="relative min-h-screen bg-white overflow-x-hidden overflow-y-auto">
+    <!-- Contenido Principal -->
+
+    <div class="w-full md:flex flex-wrap relative min-h-screen">
+
+        <!-- Contenedor izquierdo -->
+
+        <div class=" w-full md:w-44 md:h-screen flex bg-[#F3F3F3] items-center justify-center  flex-col  h-full">
+            <div class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                <button id="btnCerrarSesion" class="cursor-pointer mt-4 px-4 py-2 bg-red-500 text-white rounded  hover:bg-red-600">
+                    Cerrar sesión
+                </button>
+            </div>
+
+            <div id="botonFavoritos"
+                class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                <img src="./assets/megusta.png" alt="Logo"
+                    class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+                <p class="z-10 group-hover:text-white transition-colors duration-500">Mis favoritos</p>
+                <!-- Rectángulo animado -->
+                <div
+                    class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+                </div>
+            </div>
+            <div id="botonInicio"
+                class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                <img src="./assets/home.png" alt="Logo"
+                    class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+                <P class="z-10 group-hover:text-white transition-colors duration-500">Inicio</P>
+                <div
+                    class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+                </div>
+            </div>
+            <div id="botonReservaciones"
+                class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                <img src="./assets/notificacion.png" alt="Logo"
+                    class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+                <P class="z-10 group-hover:text-white transition-colors duration-500">Reservaciones</P>
+                <div
+                    class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+                </div>
+
+            </div>
+            <!-- Mapa -->
+            <div id="map" class="w-full h-[50px] my-0 rounded-lg shadow-md"></div>
+        </div>
+
+        <!-- Titulo -->
+        <div
+            class="animate__animated animate__backInRight w-full flex-1 md:items-center md:justify-center items-center justify-center flex flex-col p-4">
+
+            <h2 class="text-xl text-left font-bold">Bienvenido, <span id="nombreUsuario"></span></h2>
+            <h1 class="animate__animated animate__bounceInDown font-sans text-4xl md:text-6xl font-bold text-center">
+                DirectoAlPlato</h1>
+
+            <BR></BR>
+
+            <!-- Barra de búsqueda -->
+            <div class="relative md:max-w-2xl md:h-10 w-full">
+                <input id="searchInput" type="text" placeholder="¿Donde te gustaría comer?"
+                    class="bg-[#F3F3F3] rounded-md p-2 pl-10 w-full shadow" />
+                <img src="./assets/lupa.png" alt="Buscar"
+                    class="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6 opacity-60" />
+            </div>
+
+            <BR></BR>
+            <!-- Barra de categorías (ESTILO IGUAL A LA IMAGEN) -->
+            <div id="categoryButtons"
+                class="flex justify-center gap-64 border-b-2 border-gray-200 pb-2 px-4 overflow-x-auto">
+                <button
+                    class="category-btn flex items-center gap-2 cursor-pointer text-[#000000] font-bold whitespace-nowrap relative pb-1">
+                    <img src="./assets/vectores_home/cerca.png" alt="Cerca" class="w-4 " />
+                    Cerca
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF5800]" style="width: 100%;"></span>
+                </button>
+                <!-- <button
+                    class="category-btn flex items-center gap-2 cursor-pointer text-[#000000] font-bold whitespace-nowrap relative pb-1">
+                    <img src="./assets/vectores_home/Promociones.png" alt="Promociones" class="w-4 " />
+                    Promociones
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF5800]" style="width: 0;"></span>
+                </button> -->
+                <button
+                    class="category-btn flex items-center gap-2 cursor-pointer text-[#000000] font-bold whitespace-nowrap relative pb-1">
+                    <img src="./assets/vectores_home/Mas_reservado.png" alt="Mas reservados" class="w-4 " />
+                    Todos los restaurantes
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF5800]" style="width: 0;"></span>
+                </button>
+                <button
+                    class="category-btn flex items-center gap-2 cursor-pointer text-[#000000] font-bold whitespace-nowrap relative pb-1">
+                    <img src="./assets/vectores_home/Mas_valorado.png" alt="Mas valorados" class="w-4 " />
+                    Mas valorados
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF5800]" style="width: 0;"></span>
+                </button>
+            </div>
+
+
+            <BR></BR>
+            <!-- Cards -->
+            <div id="cardsContainer"
+                class="md:w-full flex gap-[150px] flex-wrap justify-center items-center content-center flex-row">
+            </div>
+
+
+            <BR></BR>
+
+
+            <!-- Leaflet JS -->
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            <!-- Leaflet Locate Control JS -->
+            <script
+                src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.js"></script>
+            <script src="./js/menu.js"></script>
+
+</body>
+
+</html>

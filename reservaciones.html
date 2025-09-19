@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- tailwind -->
+    <link rel="stylesheet" href="./src/output.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- animaciones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Leaflet Locate Control CSS -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <title>DirectoAlPlato</title>
+    <!-- no mover Style -->
+    <style>
+        body {
+            background:
+                url('./assets/vectores_home/arriba_home.png') top right no-repeat,
+                url('./assets/vectores_home/abajo_home.png') bottom right no-repeat;
+
+            background-size: 280px;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                background-size: 400px;
+            }
+        }
+
+
+        #mapDetalle {
+            height: 240px !important;
+            width: 100% !important;
+        }
+    </style>
+</head>
+
+<body class="relative min-h-screen bg-white overflow-x-hidden overflow-y-auto">
+    <!-- Contenido Principal -->
+    <div class="w-full md:flex flex-nowrap relative min-h-screen">
+
+        <!-- Contenedor izquierdo -->
+        <div class="w-full md:w-40 md:min-h-screen flex bg-[#F3F3F3] items-center justify-center flex-col sticky top-0">
+            <div class="absolute top-40">
+                <div id="botonFavoritos"
+                    class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                    <img src="./assets/megusta.png" alt="Logo"
+                        class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+                    <p class="z-10 group-hover:text-white transition-colors duration-500">Mis favoritos</p>
+                    <!-- Rectángulo animado -->
+                    <div
+                        class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+                    </div>
+                </div>
+                <div id="botonInicio"
+                    class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                    <img src="./assets/home.png" alt="Logo"
+                        class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+                    <P class="z-10 group-hover:text-white transition-colors duration-500">Inicio</P>
+                    <div
+                        class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+                    </div>
+                </div>
+                <div id="botonReservaciones"
+                    class="w-full flex bg-[#F3F3F3] items-center justify-center flex-col mb-1 relative group overflow-hidden cursor-pointer rounded-lg p-4">
+                    <img src="./assets/notificacion.png" alt="Logo"
+                        class="w-16 h-16 md:w-10 md:h-9 md:m-3.5 animate__animated animate__fadeInDown z-10 transition duration-500 group-hover:invert group-hover:brightness-0" />
+                    <P class="z-10 group-hover:text-white transition-colors duration-500">Reservaciones</P>
+                    <div
+                        class="absolute left-0 top-0 h-full w-full bg-[#FF5800] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 opacity-100 z-0">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Contenedor derecho -->
+        <div class="w-full md:flex-1 flex flex-col p-4">
+
+            <!-- Botón Volver -->
+            <button onclick="history.back()"
+                class="self-start cursor-pointer text-[#FF5800] font-bold flex items-center gap-2 mt-1">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </button>
+
+            <!-- Título y subcontenedor -->
+            <div class="animate__animated animate__backInRight dm:w-full flex flex-col p-4">
+                <h2 class="text-xl text-left font-bold">Bienvenido, <span id="nombreUsuario"></span></h2>
+                <h1
+                    class="animate__animated animate__bounceInDown font-sans text-4xl md:text-6xl font-bold text-center">
+                    DirectoAlPlato</h1>
+                <br />
+
+                <!-- tabla con reservaciones -->
+                <div class="overflow-x-auto">
+                    <table id="tablaReservaciones"
+                        class="min-w-full text-sm text-left text-gray-800 border border-gray-200 rounded-lg">
+                        <thead class="bg-gray-100 text-xs uppercase">
+                            <tr>
+                                <th class="px-4 py-3">Restaurante</th>
+                                <th class="px-4 py-3">Fecha</th>
+                                <th class="px-4 py-3">Hora</th>
+                                <th class="px-4 py-3">Personas</th>
+                                <th class="px-4 py-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- Se llena desde JS --></tbody>
+                    </table>
+                </div>
+
+                <!-- Mensaje cuando no hay reservaciones -->
+                <p id="sinReservaciones" class="hidden text-center text-gray-500 mt-8">
+                    No tienes reservaciones pendientes por confirmar.
+                </p>
+
+                <!-- Leaflet JS -->
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+                <!-- Leaflet Locate Control JS -->
+                <script
+                    src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.js"></script>
+                <script src="./js/reservaciones.js"></script>
+</body>
+
+</html>
